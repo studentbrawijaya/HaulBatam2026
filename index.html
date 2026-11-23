@@ -9,9 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Library Swiper.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <style>
         /* =========================================
@@ -57,37 +54,24 @@
         }
 
         /* =========================================
-           2. HEADER SLIDER (UPDATE: Support Video)
+           2. HEADER VIDEO (Tanpa Swiper)
            ========================================= */
         .header-slider {
             position: relative;
             width: 100%;
             height: 280px;
             overflow: hidden;
-            background-color: #000; /* Background hitam saat video loading */
+            background-color: #000; /* Background hitam sebelum video loading */
         }
-        
-        .swiper { width: 100%; height: 100%; }
 
-        /* Update CSS: img dan video dibuat sama */
-        .swiper-slide img, 
-        .swiper-slide video {
+        .header-slider video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center 30%;
         }
 
-        /* Animasi zoom HANYA untuk gambar */
-        .swiper-slide img {
-            animation: zoomOut 8s infinite alternate;
-        }
-
-        @keyframes zoomOut {
-            from { transform: scale(1.1); }
-            to { transform: scale(1); }
-        }
-
+        /* Efek gradasi putih di bawah video agar menyatu dengan form */
         .header-slider::after {
             content: '';
             position: absolute;
@@ -96,18 +80,6 @@
             background: linear-gradient(to top, #ffffff, transparent);
             z-index: 10;
             pointer-events: none;
-        }
-
-        .swiper-pagination-bullet {
-            background: rgba(255, 255, 255, 0.6) !important;
-            opacity: 1 !important;
-            width: 8px; height: 8px;
-            transition: all 0.3s;
-        }
-        .swiper-pagination-bullet-active {
-            background: #ffffff !important;
-            width: 24px;
-            border-radius: 4px;
         }
 
         /* =========================================
@@ -414,26 +386,12 @@
 <body>
 
     <div class="form-card">
-        <!-- HEADER SLIDER -->
+        <!-- HEADER VIDEO -->
         <div class="header-slider">
-            <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
-                    
-                    <!-- SLIDE 1: VIDEO -->
-                    <div class="swiper-slide">
-                        <video autoplay muted loop playsinline>
-                            <!-- ⚠️ GANTI 'video-masjid.mp4' DENGAN NAMA FILE VIDEO ANDA -->
-                            <source src="video-masjid.mp4" type="video/mp4">
-                        </video>
-                    </div>
-
-                    <!-- SLIDE 2-4: GAMBAR -->
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?q=80&w=1000&auto=format&fit=crop" alt="Masjid 2"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=1000&auto=format&fit=crop" alt="Masjid 3"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=1000&auto=format&fit=crop" alt="Masjid 4"></div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
+            <video autoplay muted loop playsinline>
+                <!-- ⚠️ GANTI 'video-masjid.mp4' DENGAN NAMA FILE VIDEO ANDA -->
+                <source src="video-masjid.mp4" type="video/mp4">
+            </video>
         </div>
 
         <!-- BODY FORM -->
@@ -534,30 +492,12 @@
         </div>
     </div>
 
-    <!-- Script Swiper -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
         /* =========================================
            ⚠️ PENTING — GANTI URL DI BAWAH INI
            ========================================= */
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvqIdvPDfzr5D5hu9es0y6z9KNcQO05htBxvkxnjoiCGpe_DYwa9ot5ItrsH7so90-/exec";
         const MAX_FILE_MB = 10;
-
-        /* =========================================
-           A. INISIALISASI SWIPER SLIDER
-           ========================================= */
-        var swiper = new Swiper(".mySwiper", {
-            effect: "fade", 
-            loop: true,     
-            autoplay: {
-                delay: 6000, // Diperpanjang jadi 6 detik agar video lebih puas dilihat
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
-        });
 
         /* =========================================
            B. JAVASCRIPT FORM LOGIC & VALIDATION
