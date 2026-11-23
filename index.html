@@ -57,22 +57,29 @@
         }
 
         /* =========================================
-           2. HEADER SLIDER
+           2. HEADER SLIDER (UPDATE: Support Video)
            ========================================= */
         .header-slider {
             position: relative;
             width: 100%;
             height: 280px;
             overflow: hidden;
+            background-color: #000; /* Background hitam saat video loading */
         }
         
         .swiper { width: 100%; height: 100%; }
 
-        .swiper-slide img {
+        /* Update CSS: img dan video dibuat sama */
+        .swiper-slide img, 
+        .swiper-slide video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center 30%;
+        }
+
+        /* Animasi zoom HANYA untuk gambar */
+        .swiper-slide img {
             animation: zoomOut 8s infinite alternate;
         }
 
@@ -411,7 +418,16 @@
         <div class="header-slider">
             <div class="swiper mySwiper">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=1000&auto=format&fit=crop" alt="Masjid 1"></div>
+                    
+                    <!-- SLIDE 1: VIDEO -->
+                    <div class="swiper-slide">
+                        <video autoplay muted loop playsinline>
+                            <!-- ⚠️ GANTI 'video-masjid.mp4' DENGAN NAMA FILE VIDEO ANDA -->
+                            <source src="video-masjid.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <!-- SLIDE 2-4: GAMBAR -->
                     <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?q=80&w=1000&auto=format&fit=crop" alt="Masjid 2"></div>
                     <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=1000&auto=format&fit=crop" alt="Masjid 3"></div>
                     <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=1000&auto=format&fit=crop" alt="Masjid 4"></div>
@@ -523,10 +539,9 @@
     <script>
         /* =========================================
            ⚠️ PENTING — GANTI URL DI BAWAH INI
-           dengan URL Web App Google Apps Script Anda
-           (Hasil dari Langkah 2.4 di panduan sebelumnya)
            ========================================= */
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvqIdvPDfzr5D5hu9es0y6z9KNcQO05htBxvkxnjoiCGpe_DYwa9ot5ItrsH7so90-/exec";
+        const MAX_FILE_MB = 10;
 
         /* =========================================
            A. INISIALISASI SWIPER SLIDER
@@ -535,7 +550,7 @@
             effect: "fade", 
             loop: true,     
             autoplay: {
-                delay: 4000, 
+                delay: 6000, // Diperpanjang jadi 6 detik agar video lebih puas dilihat
                 disableOnInteraction: false,
             },
             pagination: {
@@ -580,7 +595,17 @@
         function previewFile(input) {
             const fileNameSpan = document.getElementById('fileName');
             if (input.files && input.files[0]) {
-                fileNameSpan.textContent = "✅ " + input.files[0].name;
+                const file = input.files[0];
+                const maxSize = MAX_FILE_MB * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert(`❌ Ukuran file terlalu besar (${(file.size/1024/1024).toFixed(1)} MB).\nMaksimal ${MAX_FILE_MB} MB.`);
+                    input.value = '';
+                    fileNameSpan.textContent = "Belum ada file yang dipilih";
+                    fileNameSpan.style.color = "var(--text-muted)";
+                    fileNameSpan.style.fontWeight = "500";
+                    return;
+                }
+                fileNameSpan.textContent = "✅ " + file.name;
                 fileNameSpan.style.color = "var(--primary)";
                 fileNameSpan.style.fontWeight = "700";
             } else {
@@ -595,7 +620,7 @@
             document.getElementById(groupId).classList.remove('has-error');
         }
 
-        // 5. Format WhatsApp Otomatis (onblur)
+        // 5. Format WhatsApp Otomatis
         function formatWhatsApp(input) {
             let val = input.value.replace(/[^0-9]/g, '');
             if (val.startsWith('0')) {
@@ -606,13 +631,51 @@
             input.value = val;
         }
 
-        // 6. Validasi & Kirim Data (async)
+        // 6. Kompres Gambar
+        async function compressImage(file, maxWidth = 1600, quality = 0.75) {
+            if (file.size < 500 * 1024) return file;
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let { width, height } = img;
+                        if (width > maxWidth) {
+                            height = Math.round(height * maxWidth / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        canvas.toBlob(
+                            (blob) => blob ? resolve(blob) : reject(new Error('Compression failed')),
+                            'image/jpeg', quality
+                        );
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 7. Blob ke Base64
+        function fileToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // 8. Validasi & Kirim Data
         async function validateForm(event) {
             event.preventDefault();
             let isValid = true;
 
-            // --- MULAI VALIDASI ---
-            
             // A. Pengirim
             const pengirim = document.getElementById('namaPengirim').value.trim();
             if (pengirim === '') {
@@ -637,15 +700,15 @@
                 isValid = false;
             }
 
-            // D. Arwah (kumpulkan yang valid)
-            let arwahNames = [];
+            // D. Arwah
+            let arwahStructured = [];
             let arwahValid = false;
             document.querySelectorAll('.arwah-item').forEach(item => {
                 const selectGelar = item.querySelector('.opsi-gelar').value;
                 const inputNama = item.querySelector('.arwah-input').value.trim();
                 if (inputNama !== '' && selectGelar !== '') {
                     arwahValid = true;
-                    arwahNames.push(selectGelar + ' ' + inputNama);
+                    arwahStructured.push({ g: selectGelar, n: inputNama });
                 }
             });
             if (!arwahValid) {
@@ -660,13 +723,12 @@
                 isValid = false;
             }
 
-            // F. Bukti Pembayaran
-            const bukti = document.getElementById('buktiBayar').files;
-            if (bukti.length === 0) {
+            // F. Bukti
+            const buktiFile = document.getElementById('buktiBayar').files[0];
+            if (!buktiFile) {
                 document.getElementById('group-bukti').classList.add('has-error');
                 isValid = false;
             }
-            // --- AKHIR VALIDASI ---
 
             if (!isValid) {
                 const firstError = document.querySelector('.has-error');
@@ -676,37 +738,47 @@
                 return false;
             }
 
-            // --- KIRIM DATA ---
-            
-            // Format WA final sebelum dikirim
+            // === KIRIM ===
             formatWhatsApp(waInput);
-
-            const formData = {
-                namaPengirim: pengirim,
-                alamatAsal: alamat,
-                nomorWhatsapp: waInput.value,
-                namaArwah: arwahNames.join(', '),
-                jumlahDonasi: donasi,
-                mataUang: document.getElementById('mataUang').value
-            };
 
             const submitBtn = document.querySelector('.btn-submit');
             const originalBtnHTML = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = 'Mengirim...';
+            submitBtn.innerHTML = 'Memproses gambar...';
 
             try {
+                // Kompres + Convert
+                const compressedBlob = await compressImage(buktiFile);
+                const buktiBase64 = await fileToBase64(compressedBlob);
+                const buktiType = compressedBlob.type || 'image/jpeg';
+                let buktiName = buktiFile.name.replace(/\.[^.]+$/, '.jpg');
+
+                submitBtn.innerHTML = 'Mengirim...';
+
+                const formData = {
+                    namaPengirim: pengirim,
+                    alamatAsal: alamat,
+                    nomorWhatsapp: waInput.value,
+                    namaArwah: arwahStructured.map(a => `${a.g} ${a.n}`).join(', '),
+                    namaArwahJSON: JSON.stringify(arwahStructured),
+                    jumlahArwah: arwahStructured.length,
+                    jumlahDonasi: donasi,
+                    mataUang: document.getElementById('mataUang').value,
+                    buktiBase64: buktiBase64,
+                    buktiName: buktiName,
+                    buktiType: buktiType
+                };
+
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(formData)
                 });
 
-                // Karena 'no-cors', kita asumsikan sukses jika tidak ada error
                 alert('✅ Terima kasih! Doa dan donasi Anda telah berhasil dikirim.\n\nSemoga menjadi amal jariyah yang diterima Allah SWT. 🤲');
                 
-                // Reset form & state UI
+                // Reset UI
                 document.getElementById('doaForm').reset();
                 resetArwahList();
                 const fileNameEl = document.getElementById('fileName');
@@ -725,7 +797,7 @@
             return false;
         }
 
-        // Helper: Reset arwah list ke kondisi awal
+        // Helper: Reset arwah list
         function resetArwahList() {
             const list = document.getElementById('arwahList');
             list.innerHTML = `
