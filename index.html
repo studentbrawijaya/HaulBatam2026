@@ -54,14 +54,14 @@
         }
 
         /* =========================================
-           2. HEADER VIDEO (Tanpa Swiper)
+           2. HEADER VIDEO (Full Background)
            ========================================= */
         .header-slider {
             position: relative;
             width: 100%;
             height: 280px;
             overflow: hidden;
-            background-color: #000; /* Background hitam sebelum video loading */
+            background-color: #000;
         }
 
         .header-slider video {
@@ -71,7 +71,7 @@
             object-position: center 30%;
         }
 
-        /* Efek gradasi putih di bawah video agar menyatu dengan form */
+        /* Efek gradasi putih agar menyatu dengan form di bawahnya */
         .header-slider::after {
             content: '';
             position: absolute;
@@ -372,6 +372,72 @@
             cursor: not-allowed;
         }
 
+        /* =========================================
+           9. FOOTER (CONTACT PERSON & COPYRIGHT)
+           ========================================= */
+        .form-footer {
+            background-color: #F8FAFC;
+            border-top: 1px solid var(--border-color);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .contact-btn:hover {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(20, 184, 166, 0.15);
+        }
+
+        .contact-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #25D366; /* Warna khas WhatsApp */
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .copyright strong {
+            color: var(--primary);
+        }
+
         /* Responsive Mobile */
         @media (max-width: 480px) {
             .form-body { padding: 0 20px 30px 20px; }
@@ -386,6 +452,7 @@
 <body>
 
     <div class="form-card">
+        
         <!-- HEADER VIDEO -->
         <div class="header-slider">
             <video autoplay muted loop playsinline>
@@ -490,11 +557,40 @@
                 </button>
             </form>
         </div>
+
+        <!-- FOOTER / CONTACT PERSON -->
+        <div class="form-footer">
+            <div class="footer-title">Hubungi Contact Person (CP)</div>
+            
+            <div class="contact-list">
+                <!-- CP 1: Bayu -->
+                <a href="https://wa.me/6287895247297" target="_blank" class="contact-btn">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                    Bayu (0878 9524 7297)
+                </a>
+
+                <!-- CP 2: Artib -->
+                <a href="https://wa.me/6281360698509" target="_blank" class="contact-btn">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                    Artib (0813 6069 8509)
+                </a>
+            </div>
+
+            <div class="copyright">
+                &copy; 2026 <strong>Al-Khidmah Batam</strong>. All Rights Reserved.
+            </div>
+        </div>
     </div>
 
+    <!-- SCRIPT FORM & KIRIM DATA -->
     <script>
         /* =========================================
            ⚠️ PENTING — GANTI URL DI BAWAH INI
+           dengan URL Web App Google Apps Script Anda
            ========================================= */
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvqIdvPDfzr5D5hu9es0y6z9KNcQO05htBxvkxnjoiCGpe_DYwa9ot5ItrsH7so90-/exec";
         const MAX_FILE_MB = 10;
@@ -560,7 +656,7 @@
             document.getElementById(groupId).classList.remove('has-error');
         }
 
-        // 5. Format WhatsApp Otomatis
+        // 5. Format WhatsApp Otomatis (onblur)
         function formatWhatsApp(input) {
             let val = input.value.replace(/[^0-9]/g, '');
             if (val.startsWith('0')) {
@@ -571,7 +667,7 @@
             input.value = val;
         }
 
-        // 6. Kompres Gambar
+        // 6. Kompres Gambar di Browser
         async function compressImage(file, maxWidth = 1600, quality = 0.75) {
             if (file.size < 500 * 1024) return file;
             return new Promise((resolve, reject) => {
@@ -611,7 +707,7 @@
             });
         }
 
-        // 8. Validasi & Kirim Data
+        // 8. Validasi & Kirim Data (async)
         async function validateForm(event) {
             event.preventDefault();
             let isValid = true;
@@ -687,7 +783,7 @@
             submitBtn.innerHTML = 'Memproses gambar...';
 
             try {
-                // Kompres + Convert
+                // Kompres + Convert ke Base64
                 const compressedBlob = await compressImage(buktiFile);
                 const buktiBase64 = await fileToBase64(compressedBlob);
                 const buktiType = compressedBlob.type || 'image/jpeg';
@@ -754,6 +850,5 @@
             `;
         }
     </script>
-
 </body>
 </html>
